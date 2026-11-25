@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Verify Payment — Mwangaza{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="text-center mb-4">
+      <i class="bi bi-shield-check display-4 text-success"></i>
+      <h1 class="h2 mt-2">Verify a M-Pesa payment</h1>
+      <p class="text-muted">Enter the 10-character M-Pesa transaction code.</p>
+    </div>
+    <div class="card shadow-sm mb-4">
+      <div class="card-body p-4">
+        <form method="POST" class="row g-3">
+          <div class="col-md-9">
+            <label for="mpesa_code" class="form-label">M-Pesa code</label>
+            <input type="text" id="mpesa_code" name="mpesa_code"
+              class="form-control font-monospace text-uppercase"
+              maxlength="10" minlength="10" pattern="[A-Z0-9]{10}"
+              value="{{ code }}" placeholder="e.g. QA12BC34EF" required>
+          </div>
+          <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-success w-100">
+              <i class="bi bi-search"></i> Verify
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    {% if code and not payment %}
+    <div class="alert alert-danger"><i class="bi bi-x-circle"></i> No verified payment found for <strong>{{ code }}</strong>.</div>
+    {% elif payment %}
+    <div class="card border-success shadow-sm printable-payment">
+      <div class="card-header bg-success text-white d-flex justify-content-between">
+        <strong><i class="bi bi-patch-check-fill"></i> Verified payment</strong>
+        <span>RCT-{{ "%05d"|format(payment.payment_id) }}</span>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6"><small class="text-muted d-block">M-Pesa code</small><strong class="font-monospace">{{ payment.mpesa_code }}</strong></div>
+          <div class="col-md-6"><small class="text-muted d-block">Amount</small><strong>KES {{ "%.2f"|format(payment.amount|float) }}</strong></div>
+          <div class="col-md-6"><small class="text-muted d-block">Unit</small><strong>{{ payment.lease.unit.unit_number }}</strong></div>
+          <div class="col-md-6"><small class="text-muted d-block">Payment date</small><strong>{{ payment.payment_date.strftime('%d %b %Y %H:%M') }}</strong></div>
+        </div>
+        <div class="d-flex gap-2 mt-4 no-print">
+          <button type="button" class="btn btn-dark" onclick="window.print()"><i class="bi bi-printer"></i> Print receipt</button>
+          <a href="{{ url_for('reporting.public_receipt_by_code', mpesa_code=payment.mpesa_code) }}" class="btn btn-outline-dark" target="_blank">
+            <i class="bi bi-file-pdf"></i> Download PDF
+          </a>
+          <a href="{{ url_for('property.public_vacancies') }}" class="btn btn-outline-secondary">View apartments</a>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Units{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2><i class="bi bi-door-open me-2"></i>Unit Inventory</h2>
+  {% if current_user.role_name == "Landlord" %}
+  <a href="{{ url_for('property.add_unit') }}" class="btn btn-dark">
+    <i class="bi bi-plus-lg"></i> Add Unit
+  </a>
+  {% endif %}
+</div>
+
+<div class="row g-3">
+  {% for unit in units %}
+  <div class="col-sm-6 col-md-4 col-lg-3">
+    <div class="card h-100 border-0 shadow-sm">
+      {% set fallback = 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=85' %}
+      <img src="{{ unit.image_url or fallback }}" class="card-img-top unit-inventory-image"
+        alt="Apartment unit {{ unit.unit_number }}">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <h5 class="card-title mb-1">{{ unit.unit_number }}</h5>
+          {% if unit.status == 'Occupied' %}
+            <span class="badge text-bg-success">Occupied</span>
+          {% elif unit.status == 'Vacant' %}
+            <span class="badge text-bg-secondary">Vacant</span>
+          {% else %}
+            <span class="badge text-bg-warning text-dark">Maintenance</span>
+          {% endif %}
+        </div>
+        <p class="text-muted small mb-2">
+          KES {{ "%.2f" | format(unit.monthly_rent | float) }} / month
+        </p>
+        <p class="text-muted small mb-2">
+          Deposit: KES {{ "%.2f" | format(unit.deposit|float) }}
+        </p>
+        <a href="{{ url_for('property.edit_unit', unit_id=unit.unit_id) }}"
+          class="btn btn-sm btn-outline-secondary w-100">
+          <i class="bi bi-pencil"></i> Edit
+        </a>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="col-12">
+    <p class="text-muted">No units found. <a href="{{ url_for('property.add_unit') }}">Add the first unit.</a></p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

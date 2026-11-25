@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Post Payment{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <h2 class="mb-3"><i class="bi bi-cash-coin me-2"></i>Post M-Pesa Payment</h2>
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <form method="POST" id="paymentForm">
+          <div class="mb-3">
+            <label class="form-label">Lease / Tenant</label>
+            <select name="lease_id" class="form-select" required>
+              <option value="">— Select active lease —</option>
+              {% for l in leases %}
+              <option value="{{ l.lease_id }}">
+                {{ l.tenant.email }} — Unit {{ l.unit.unit_number }}
+                (Balance: KES {{ "%.2f"|format(l.balance) }})
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Amount (KES)</label>
+            <input type="number" name="amount" class="form-control"
+              step="0.01" min="1" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">M-Pesa Transaction Code</label>
+            <input type="text" name="mpesa_code" id="mpesaCode"
+              class="form-control font-monospace text-uppercase"
+              maxlength="10" minlength="10"
+              pattern="[A-Z0-9]{10}"
+              placeholder="e.g. QA12BC34EF"
+              required />
+            <div class="form-text">Exactly 10 uppercase letters and digits.</div>
+            <div id="mpesaFeedback" class="invalid-feedback">
+              Must be exactly 10 uppercase alphanumeric characters.
+            </div>
+          </div>
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-dark">
+              <i class="bi bi-check-lg"></i> Post Payment
+            </button>
+            <a href="{{ url_for('property.caretaker_dashboard') }}" class="btn btn-outline-secondary">
+              Cancel
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/mpesa_validate.js') }}"></script>
+{% endblock %}

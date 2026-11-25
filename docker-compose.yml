@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+
+  # ── MySQL 8.0 Database ───────────────────────────────────────────────────
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: RootPass2026!
+      MYSQL_DATABASE: srms_db
+      MYSQL_USER: srms_user
+      MYSQL_PASSWORD: SecurePassword123!
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+      - ./db/triggers.sql:/docker-entrypoint-initdb.d/02_triggers.sql
+      - ./db/seed_data.sql:/docker-entrypoint-initdb.d/03_seed_data.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost",
+             "-u", "srms_user", "-pSecurePassword123!"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # ── Flask Web App ─────────────────────────────────────────────────────────
+  web:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_APP: wsgi.py
+      FLASK_ENV: production
+      SECRET_KEY: "change-me-in-production-c8d9e7f6a5b40312"
+      DATABASE_URL: "mysql+mysqlclient://srms_user:SecurePassword123!@db:3306/srms_db"
+      BCRYPT_LOG_ROUNDS: "12"
+      LOCKOUT_ATTEMPTS: "5"
+      LOCKOUT_TIME_MINUTES: "30"
+      INTASEND_SECRET_KEY: "${INTASEND_SECRET_KEY:-}"
+      INTASEND_WEBHOOK_CHALLENGE: "${INTASEND_WEBHOOK_CHALLENGE:-}"
+      INTASEND_BASE_URL: "${INTASEND_BASE_URL:-https://api.intasend.com/api/v1}"
+    volumes:
+      - .:/app   # remove in production; use image layers only
+    command: >
+      gunicorn --workers=4 --bind 0.0.0.0:5000
+               --access-logfile - --error-logfile -
+               wsgi:app
+
+volumes:
+  mysql_data:

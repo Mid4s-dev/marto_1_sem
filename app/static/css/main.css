@@ -1,0 +1,177 @@
+/* ── Mwangaza Rental System — Custom Styles ───────────────────────── */
+
+body {
+  background-color: #f8f9fa;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* Free-to-use Unsplash photo: modern apartment interior */
+.auth-page {
+  background:
+    linear-gradient(rgba(15, 23, 42, 0.62), rgba(15, 23, 42, 0.62)),
+    url("https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2200&q=85")
+    center / cover fixed no-repeat;
+}
+
+.auth-page main {
+  color: #fff;
+}
+
+.auth-page .text-muted {
+  color: rgba(255, 255, 255, 0.78) !important;
+}
+
+.min-vh-75 {
+  min-height: 75vh;
+}
+
+.profile-avatar {
+  border-radius: 50%;
+  vertical-align: middle;
+  background-color: #fff;
+}
+
+/* Navbar */
+.navbar-brand {
+  letter-spacing: 0.02em;
+}
+
+/* Cards */
+.card {
+  border-radius: 0.5rem;
+}
+
+/* Monospace for codes */
+.font-monospace {
+  font-family: 'Courier New', Courier, monospace;
+}
+
+/* KPI stat cards */
+.card .fs-1 {
+  line-height: 1;
+}
+
+/* Audit log pre blocks */
+pre {
+  background: #f1f3f5;
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  max-height: 300px;
+  overflow-y: auto;
+  font-size: 0.8rem;
+}
+
+/* Footer */
+footer {
+  background-color: #f8f9fa;
+}
+
+/* Form focus ring */
+.form-control:focus,
+.form-select:focus {
+  border-color: #212529;
+  box-shadow: 0 0 0 0.2rem rgba(33, 37, 41, 0.15);
+}
+
+/* Table subtle zebra on hover */
+.table-hover tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+/* Badge alignment */
+.badge {
+  font-size: 0.72em;
+  vertical-align: middle;
+}
+
+.public-hero {
+  background:
+    linear-gradient(120deg, rgba(15, 23, 42, 0.82), rgba(14, 116, 144, 0.68)),
+    url("https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=85")
+    center / cover no-repeat;
+}
+
+.vacancy-card,
+.unit-inventory-image {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.vacancy-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 1rem 2.5rem rgba(15, 23, 42, 0.16) !important;
+}
+
+.vacancy-image,
+.unit-inventory-image {
+  height: 210px;
+  object-fit: cover;
+}
+
+.unit-inventory-image {
+  height: 150px;
+}
+
+.price-box {
+  background: #f1f5f9;
+  min-height: 82px;
+}
+
+.public-navbar {
+  background: rgba(15, 23, 42, 0.96);
+  box-shadow: 0 0.25rem 1rem rgba(15, 23, 42, 0.12);
+}
+
+.public-navbar .nav-link {
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.public-navbar .nav-link:hover {
+  color: #fff;
+}
+
+.amenities-section {
+  background: #eef2f6;
+}
+
+.amenity-card,
+.stat-box {
+  background: #fff;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.site-footer {
+  color: #fff;
+  background: #111827;
+}
+
+.footer-link {
+  color: rgba(255, 255, 255, 0.72);
+  text-decoration: none;
+  margin-bottom: 0.35rem;
+}
+
+.footer-link:hover {
+  color: #fff;
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.scroll-anchor {
+  scroll-margin-top: 5rem;
+}
+
+@media print {
+  .navbar,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+  main {
+    margin: 0 !important;
+  }
+}

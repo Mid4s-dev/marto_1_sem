@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if unit else 'Add' }} Unit{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <h2 class="mb-3">{{ 'Edit' if unit else 'Add' }} Unit</h2>
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <form method="POST">
+          {% if not unit %}
+          <div class="mb-3">
+            <label class="form-label">Unit Number</label>
+            <input type="text" name="unit_number" class="form-control"
+              placeholder="e.g. A01" required />
+          </div>
+          {% endif %}
+          <div class="mb-3">
+            <label class="form-label">Monthly Rent (KES)</label>
+            <input type="number" name="monthly_rent" class="form-control"
+              step="0.01" min="0"
+              value="{{ unit.monthly_rent if unit else '' }}" required />
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">One-Month Deposit (KES)</label>
+              <input type="number" name="deposit" class="form-control"
+                step="0.01" min="0"
+                value="{{ unit.deposit if unit else '' }}" required />
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label">Bedrooms</label>
+              <input type="number" name="bedrooms" class="form-control"
+                min="1" value="{{ unit.bedrooms if unit else 1 }}" required />
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label">Bathrooms</label>
+              <input type="number" name="bathrooms" class="form-control"
+                min="1" value="{{ unit.bathrooms if unit else 1 }}" required />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Apartment Details</label>
+            <textarea name="description" class="form-control" rows="3"
+              placeholder="Floor level, view, fittings, amenities...">{{ unit.description if unit else '' }}</textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Apartment Image URL</label>
+            <input type="url" name="image_url" class="form-control"
+              value="{{ unit.image_url or '' }}"
+              placeholder="https://images.unsplash.com/...">
+            <div class="form-text">Use a royalty-free image from Unsplash or another licensed source.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select name="status" class="form-select">
+              {% for s in ['Vacant', 'Occupied', 'Maintenance'] %}
+              <option value="{{ s }}"
+                {% if unit and unit.status == s %}selected{% endif %}>
+                {{ s }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-dark">
+              <i class="bi bi-save"></i> Save
+            </button>
+            <a href="{{ url_for('property.list_units') }}" class="btn btn-outline-secondary">
+              Cancel
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

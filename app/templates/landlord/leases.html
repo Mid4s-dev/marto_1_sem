@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Active Leases{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2><i class="bi bi-file-earmark-text me-2"></i>Active Leases</h2>
+  <a href="{{ url_for('property.assign_lease') }}" class="btn btn-dark">
+    <i class="bi bi-plus-lg"></i> Assign Lease
+  </a>
+</div>
+
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead class="table-dark">
+        <tr>
+          <th>#</th><th>Tenant</th><th>Unit</th><th>Start Date</th>
+          <th>Balance (KES)</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for lease in leases %}
+        <tr>
+          <td>{{ lease.lease_id }}</td>
+          <td>{{ lease.tenant.email }}</td>
+          <td>{{ lease.unit.unit_number }}</td>
+          <td>{{ lease.start_date }}</td>
+          <td class="{{ 'text-danger fw-bold' if lease.balance > 0 else 'text-success' }}">
+            {{ "%.2f" | format(lease.balance) }}
+          </td>
+          <td>
+            <a href="{{ url_for('reporting.lease_agreement', lease_id=lease.lease_id) }}"
+              class="btn btn-sm btn-outline-dark" title="Create and print lease agreement">
+              <i class="bi bi-file-earmark-pdf"></i> Agreement
+            </a>
+            {% if current_user.role_name == "Landlord" %}
+            <form method="POST"
+              action="{{ url_for('property.terminate_lease', lease_id=lease.lease_id) }}"
+              onsubmit="return confirm('Terminate this lease?')">
+              <button type="submit" class="btn btn-sm btn-outline-danger">
+                <i class="bi bi-x-circle"></i> Terminate
+              </button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-center text-muted py-3">No active leases.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

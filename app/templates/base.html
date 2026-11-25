@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Mwangaza Rental System{% endblock %}</title>
+  <!-- Bootstrap 5 -->
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+    crossorigin="anonymous" />
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+{% if current_user.is_authenticated %}
+<!-- ── Navbar ──────────────────────────────────────────────────────────── -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+  <a class="navbar-brand fw-bold" href="{{ url_for('property.public_vacancies') }}">
+    <i class="bi bi-buildings-fill me-1"></i> Mwangaza Apartments
+  </a>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+    data-bs-target="#mainNav">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="mainNav">
+    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('property.public_vacancies') }}">
+          <i class="bi bi-house-heart"></i> Apartments
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('finance.verify_payment') }}">
+          <i class="bi bi-shield-check"></i> Verify Payment
+        </a>
+      </li>
+
+      {% if current_user.role_name == "Landlord" %}
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('property.landlord_dashboard') }}">
+          <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('property.list_units') }}">
+          <i class="bi bi-door-open"></i> Units
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('property.list_leases') }}">
+          <i class="bi bi-file-earmark-text"></i> Leases
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('finance.all_payments') }}">
+          <i class="bi bi-cash-stack"></i> Payments
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('finance.arrears_report') }}">
+          <i class="bi bi-exclamation-triangle"></i> Arrears
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('audit.view_logs') }}">
+          <i class="bi bi-shield-lock"></i> Audit Logs
+        </a>
+      </li>
+
+      {% elif current_user.role_name == "Caretaker" %}
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('property.caretaker_dashboard') }}">
+          <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('property.list_units') }}">
+          <i class="bi bi-door-open"></i> Units
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('property.assign_lease') }}">
+          <i class="bi bi-person-plus"></i> Assign Lease
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('finance.post_payment') }}">
+          <i class="bi bi-cash-coin"></i> Post Payment
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('property.add_tenant') }}">
+          <i class="bi bi-person-badge"></i> Add Tenant
+        </a>
+      </li>
+
+      {% elif current_user.role_name == "Tenant" %}
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('finance.tenant_statement') }}">
+          <i class="bi bi-receipt"></i> My Statement
+        </a>
+      </li>
+      {% endif %}
+
+    </ul>
+
+    <ul class="navbar-nav ms-auto">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+          <img
+            class="profile-avatar me-1"
+            src="https://api.dicebear.com/9.x/initials/svg?seed={{ current_user.email|urlencode }}&backgroundColor=0d6efd,198754,6f42c1&fontFamily=Arial"
+            alt="Profile image for {{ current_user.email }}"
+            width="28"
+            height="28" />
+          {{ current_user.email }}
+          <span class="badge bg-secondary ms-1">{{ current_user.role_name }}</span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li>
+            <a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}">
+              <i class="bi bi-box-arrow-right"></i> Logout
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</nav>
+{% else %}
+<nav class="navbar navbar-expand-lg navbar-dark public-navbar px-3" aria-label="Public navigation">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="{{ url_for('property.public_vacancies') }}">
+      <i class="bi bi-buildings-fill me-1"></i> Mwangaza Apartments
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+      data-bs-target="#publicNav" aria-controls="publicNav" aria-expanded="false">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="publicNav">
+      <ul class="navbar-nav ms-auto align-items-lg-center">
+        <li class="nav-item"><a class="nav-link" href="#vacant-units">Vacant Units</a></li>
+        <li class="nav-item"><a class="nav-link" href="#amenities">Amenities</a></li>
+        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+        <li class="nav-item ms-lg-2">
+          <a class="btn btn-light btn-sm" href="{{ url_for('auth.login') }}">
+            <i class="bi bi-box-arrow-in-right"></i> Tenant &amp; Staff Login
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+{% endif %}
+
+<!-- ── Flash messages ─────────────────────────────────────────────────── -->
+<div class="container mt-3">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+  {% endwith %}
+</div>
+
+<!-- ── Page content ───────────────────────────────────────────────────── -->
+<main class="container my-4">
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer mt-5">
+  <div class="container py-5">
+    <div class="row g-4">
+      <div class="col-md-5">
+        <h5 class="fw-bold"><i class="bi bi-buildings-fill me-1"></i> Mwangaza Apartments</h5>
+        <p class="text-white-50 mb-0">Comfortable, secure rental homes with transparent pricing and convenient digital account management.</p>
+      </div>
+      <div class="col-md-3">
+        <h6 class="fw-bold">Explore</h6>
+        <a class="footer-link d-block" href="{{ url_for('property.public_vacancies') }}#vacant-units">Vacant units</a>
+        <a class="footer-link d-block" href="{{ url_for('property.public_vacancies') }}#amenities">Amenities</a>
+        <a class="footer-link d-block" href="{{ url_for('auth.login') }}">Resident login</a>
+      </div>
+      <div class="col-md-4">
+        <h6 class="fw-bold">Contact</h6>
+        <p class="text-white-50 mb-1"><i class="bi bi-geo-alt"></i> Nairobi, Kenya</p>
+        <p class="text-white-50 mb-1"><i class="bi bi-telephone"></i> +254 700 000 000</p>
+        <p class="text-white-50 mb-0"><i class="bi bi-envelope"></i> hello@mwangaza.co.ke</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom text-center text-white-50 small py-3">
+    Mwangaza Apartments &copy; {{ 2026 }} &mdash; Secure Rental Management
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+  crossorigin="anonymous"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

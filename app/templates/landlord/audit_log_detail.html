@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Audit Log #{{ log.log_id }}{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center gap-2 mb-3">
+  <a href="{{ url_for('audit.view_logs') }}" class="btn btn-sm btn-outline-secondary">
+    <i class="bi bi-arrow-left"></i> Back
+  </a>
+  <h2 class="mb-0">Audit Log #{{ log.log_id }}</h2>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header fw-bold">Event Metadata</div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item d-flex justify-content-between">
+          <span class="text-muted">Timestamp (UTC)</span>
+          <span>{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+          <span class="text-muted">User</span>
+          <span>{{ log.user.email if log.user else '—' }}</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+          <span class="text-muted">Action</span>
+          <span>
+            {% if log.action_type == 'INSERT' %}
+              <span class="badge text-bg-success">INSERT</span>
+            {% elif log.action_type == 'UPDATE' %}
+              <span class="badge text-bg-warning text-dark">UPDATE</span>
+            {% else %}
+              <span class="badge text-bg-danger">DELETE</span>
+            {% endif %}
+          </span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+          <span class="text-muted">Entity</span>
+          <span>{{ log.entity_affected }}</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+          <span class="text-muted">Entity ID</span>
+          <span>{{ log.entity_id }}</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+          <span class="text-muted">IP Address</span>
+          <span><code>{{ log.ip_address }}</code></span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card shadow-sm mb-3">
+      <div class="card-header fw-bold text-danger">Pre-Change Snapshot</div>
+      <div class="card-body">
+        <pre class="mb-0 small">{{ log.pre_change_json | tojson(indent=2) if log.pre_change_json else '—' }}</pre>
+      </div>
+    </div>
+    <div class="card shadow-sm">
+      <div class="card-header fw-bold text-success">Post-Change Snapshot</div>
+      <div class="card-body">
+        <pre class="mb-0 small">{{ log.post_change_json | tojson(indent=2) if log.post_change_json else '—' }}</pre>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

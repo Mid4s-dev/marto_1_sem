@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Create Lease Agreement{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="mb-0"><i class="bi bi-file-earmark-text me-2"></i>Lease Agreement</h2>
+      <a href="{{ url_for('property.list_leases') }}" class="btn btn-outline-secondary">Back to leases</a>
+    </div>
+
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <div class="alert alert-secondary">
+          <div><strong>Tenant:</strong> {{ lease.tenant.email }}</div>
+          <div><strong>Unit:</strong> {{ lease.unit.unit_number }}</div>
+          <div><strong>Monthly rent:</strong> KES {{ "%.2f"|format(lease.unit.monthly_rent|float) }}</div>
+          <div><strong>Lease start:</strong> {{ lease.start_date }}</div>
+        </div>
+
+        <form method="POST">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label for="end_date" class="form-label">Lease End Date</label>
+              <input type="date" id="end_date" name="end_date" class="form-control"
+                value="{{ lease.end_date or '' }}">
+              <div class="form-text">Leave blank for an open-ended agreement.</div>
+            </div>
+            <div class="col-md-4">
+              <label for="rent_due_day" class="form-label">Rent Due Day</label>
+              <input type="number" id="rent_due_day" name="rent_due_day"
+                class="form-control" min="1" max="31" value="1" required>
+            </div>
+            <div class="col-md-4">
+              <label for="deposit" class="form-label">Security Deposit (KES)</label>
+              <input type="number" id="deposit" name="deposit" class="form-control"
+                step="0.01" min="0" value="{{ lease.unit.deposit|float }}"
+                required>
+            </div>
+            <div class="col-md-4">
+              <label for="notice_days" class="form-label">Termination Notice (days)</label>
+              <input type="number" id="notice_days" name="notice_days"
+                class="form-control" min="0" value="30" required>
+            </div>
+            <div class="col-md-8">
+              <label for="terms" class="form-label">Additional Terms</label>
+              <textarea id="terms" name="terms" class="form-control" rows="5"
+                placeholder="Pet policy, maintenance responsibilities, utilities, parking, house rules..."></textarea>
+            </div>
+          </div>
+
+          <div class="d-flex gap-2 mt-4">
+            <button type="submit" class="btn btn-dark">
+              <i class="bi bi-file-earmark-pdf"></i> Generate PDF
+            </button>
+            <a href="{{ url_for('property.list_leases') }}" class="btn btn-outline-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
